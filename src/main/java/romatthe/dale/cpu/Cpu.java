@@ -1,16 +1,12 @@
 package romatthe.dale.cpu;
 
 import org.apache.commons.io.IOUtils;
-import static romatthe.dale.patterns.InstructionDecompPatterns.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static javaslang.API.$;
-import static javaslang.API.Case;
-import static javaslang.API.Match;
-import static javaslang.Patterns.*;
-import static javaslang.Patterns.Tuple4;
+import static javaslang.API.*;
+import static romatthe.dale.patterns.InstructionDecompPatterns.Instruction;
 
 public class Cpu {
 
