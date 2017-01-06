@@ -10,6 +10,8 @@ public class Cpu {
 
     private short opcode = 0;
     private short indexRegisterI = 0;
+    private short delayRegister = 0;
+    private short soundRegister = 0;
     private int programCounter = 0x200;   // Program counter starts at 0x200
     private int stackPointer = 0;
     private Memory memory = new Memory(0x1000);
@@ -53,20 +55,28 @@ public class Cpu {
         this.programCounter = programCounter;
     }
 
-    public short getOpcode() {
-        return opcode;
-    }
-
-    public void setOpcode(short opcode) {
-        this.opcode = opcode;
-    }
-
     public short getIndexRegisterI() {
         return indexRegisterI;
     }
 
     public void setIndexRegisterI(short indexRegisterI) {
         this.indexRegisterI = indexRegisterI;
+    }
+
+    public short getDelayRegister() {
+        return delayRegister;
+    }
+
+    public void setDelayRegister(short delayRegister) {
+        this.delayRegister = delayRegister;
+    }
+
+    public short getSoundRegister() {
+        return this.delayRegister;
+    }
+
+    public void setSoundRegister(short soundRegister) {
+        this.soundRegister = soundRegister;
     }
 
     public int getStackPointer() {
