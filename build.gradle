@@ -37,8 +37,6 @@ repositories {
 
 dependencies {
     compile 'commons-io:commons-io:2.5'
-    compile 'io.javaslang:javaslang:2.1.0-alpha'
-    compile 'io.javaslang:javaslang-match:2.1.0-alpha'
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:3.6.1'
 }

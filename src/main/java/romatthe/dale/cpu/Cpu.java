@@ -1,12 +1,10 @@
 package romatthe.dale.cpu;
 
 import org.apache.commons.io.IOUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import static javaslang.API.*;
-import static romatthe.dale.patterns.InstructionDecompPatterns.Instruction;
 
 public class Cpu {
 
@@ -47,60 +45,77 @@ public class Cpu {
     private void step() {
         // Fetch the entire opcode
         // The Chip 8 Opcodes consist of 2 bytes each, so we much fetch them and merge them
-        Instruction instruction = new Instruction(this.getNextOpcode());
+        int opcode = this.getNextOpcode();
 
-        String returnVal = Match(instruction).of(
-            Case(Instruction($(0x0), $(0x0), $(0xE), $(0x0)), ()    -> "00E0"),
-            Case(Instruction($(0x0), $(0x0), $(0xE), $(0xE)), ()    -> "00EE"),
-            Case(Instruction($(0x0), $(), $(), $()), ()             -> "ONNN"),
-            Case(Instruction($(0x1), $(), $(), $()), ()             -> "1NNN"),
-            Case(Instruction($(0x2), $(), $(), $()), ()             -> "2NNN"),
-            Case(Instruction($(0x3), $(), $(), $()), ()             -> "3XNN"),
-            Case(Instruction($(0x4), $(), $(), $()), ()             -> "4XNN"),
-            Case(Instruction($(0x5), $(), $(), $()), ()             -> "5XY0"),
-            Case(Instruction($(0x6), $(), $(), $()), ()             -> "6XNN"),
-            Case(Instruction($(0x7), $(), $(), $()), ()             -> "7XNN"),
-            Case(Instruction($(0x8), $(), $(), $(0x0)), ()          -> "8XY0"),
-            Case(Instruction($(0x8), $(), $(), $(0x1)), ()          -> "8XY1"),
-            Case(Instruction($(0x8), $(), $(), $(0x2)), ()          -> "8XY2"),
-            Case(Instruction($(0x8), $(), $(), $(0x3)), ()          -> "8XY3"),
-            Case(Instruction($(0x8), $(), $(), $(0x4)), ()          -> "8XY4"),
-            Case(Instruction($(0x8), $(), $(), $(0x5)), ()          -> "8XY5"),
-            Case(Instruction($(0x8), $(), $(), $(0x6)), ()          -> "8XY6"),
-            Case(Instruction($(0x8), $(), $(), $(0x7)), ()          -> "8XY7"),
-            Case(Instruction($(0x8), $(), $(), $(0xE)), ()          -> "8XYE"),
-            Case(Instruction($(0x9), $(), $(), $(0x0)), ()          -> "9XY0"),
-            Case(Instruction($(0xA), $(), $(), $()), ()             -> "ANNN"),
-            Case(Instruction($(0xB), $(), $(), $()), ()             -> "BNNN"),
-            Case(Instruction($(0xC), $(), $(), $()), ()             -> "CXNN"),
-            Case(Instruction($(0xD), $(), $(), $()), ()             -> "DXYN"),
-            Case(Instruction($(0xE), $(), $(0x9), $(0xE)), ()       -> "EX9E"),
-            Case(Instruction($(0xE), $(), $(0xA), $(0x1)), ()       -> "EXA1"),
-            Case(Instruction($(0xF), $(), $(0x0), $(0x7)), ()       -> "FX07"),
-            Case(Instruction($(0xF), $(), $(0x0), $(0xA)), ()       -> "FX0A"),
-            Case(Instruction($(0xF), $(), $(0x1), $(0x5)), ()       -> "FX15"),
-
-            Case(Instruction($(), $(), $(), $()), ()                -> "(catch all)")
-        );
-
-        System.out.println(returnVal);
+        // The first switch inspects the 4 most significant bits
+        // Therefore we do `opcode & 0xF000`
+        switch(opcode & 0xF000) {
+            case 0x0000:
+                switch(opcode) {
+                    case 0x00E0: System.out.println("0x00E0"); break;
+                    case 0x00EE: System.out.println("0x00EE"); break;
+                    default: System.out.println("0x0NNN"); break;
+                }
+                break;
+            case 0x1000: System.out.println("0x1NNN"); break;
+            case 0x2000: System.out.println("0x2NNN"); break;
+            case 0x3000: System.out.println("0x3XNN"); break;
+            case 0x4000: System.out.println("0x4XNN"); break;
+            case 0x5000: System.out.println("0x5XY0"); break;
+            case 0x6000: System.out.println("0x6XNN"); break;
+            case 0x7000: System.out.println("0x7XNN"); break;
+            case 0x8000:
+                // The first switch inspects the 4 least significant bits
+                // Therefore we do `opcode & 0x000F`
+                switch(opcode & 0x000F) {
+                    case 0x0000: System.out.println("0x8XY0"); break;
+                    case 0x0001: System.out.println("0x8XY1"); break;
+                    case 0x0002: System.out.println("0x8XY2"); break;
+                    case 0x0003: System.out.println("0x8XY3"); break;
+                    case 0x0004: System.out.println("0x8XY4"); break;
+                    case 0x0005: System.out.println("0x8XY5"); break;
+                    case 0x0006: System.out.println("0x8XY6"); break;
+                    case 0x0007: System.out.println("0x8XY7"); break;
+                    case 0x000E: System.out.println("0x8XYE"); break;
+                }
+                break;
+            case 0x9000: System.out.println("0x9XY0"); break;
+            case 0xA000: System.out.println("0xANNN"); break;
+            case 0xB000: System.out.println("0xBNNN"); break;
+            case 0xC000: System.out.println("0xCXNN"); break;
+            case 0xD000: System.out.println("0xDXYN"); break;
+            case 0xE000:
+                // The first switch inspects the 4 least significant bits
+                // Therefore we do `opcode & 0x000F`
+                switch(opcode & 0x000F) {
+                    case 0x0001: System.out.println("0xEXA1"); break;
+                    case 0x000E: System.out.println("0xEX9E"); break;
+                }
+                break;
+            case 0xF000:
+                // The first switch inspects the 8 least significant bits
+                // Therefore we do `opcode & 0x00FF`
+                switch(opcode & 0x00FF) {
+                    case 0x0007: System.out.println("0xFX07"); break;
+                    case 0x000A: System.out.println("0xFX0A"); break;
+                    case 0x0015: System.out.println("0xFX15"); break;
+                    case 0x0018: System.out.println("0xFX18"); break;
+                    case 0x001E: System.out.println("0xFX1E"); break;
+                    case 0x0029: System.out.println("0xFX29"); break;
+                    case 0x0033: System.out.println("0xFX33"); break;
+                    case 0x0055: System.out.println("0xFX55"); break;
+                    case 0x0065: System.out.println("0xFX65"); break;
+                }
+                break;
+            default:
+                throw new NotImplementedException();
+        }
 
         this.programCounter += 2;
-
-        // Update timers
-        //if(delay_timer > 0)
-        //    --delay_timer;
-        //
-        //if(sound_timer > 0)
-        //{
-        //    if(sound_timer == 1)
-        //        printf("BEEP!\n");
-        //    --sound_timer;
-        //}
     }
 
     private int getNextOpcode() {
-        return (this.memory[this.programCounter] << 8) | (0x00FF & this.memory[this.programCounter +1] & 0x0FFF);
+        return ((this.memory[this.programCounter] << 8) | (0x00FF & this.memory[this.programCounter +1]))  & 0xFFFF;
     }
 
 }
