@@ -8,11 +8,12 @@ import java.io.InputStream;
 
 public class Cpu {
 
-    private byte[] memory = new byte[4096];
-    private short programCounter = 0x200;   // Program counter starts at 0x200
     private short opcode = 0;
     private short indexRegisterI = 0;
-    private short stackPointer = 0;
+    private int programCounter = 0x200;   // Program counter starts at 0x200
+    private int stackPointer = 0;
+    private Memory memory = new Memory(0x1000);
+    private short[] registers = new short[16];
 
     public Cpu() throws IOException {
         // Clear display
@@ -30,10 +31,58 @@ public class Cpu {
 
         // Load the program into memory
         for(int i = 0; i < data.length; ++i)
-            memory[i + 512] = data[i];
+            this.memory.write(i + 512, data[i]);
 
         // Reset timers
         this.run();
+    }
+
+    public Memory getMemory() {
+        return memory;
+    }
+
+    public void setMemory(Memory memory) {
+        this.memory = memory;
+    }
+
+    public int getProgramCounter() {
+        return programCounter;
+    }
+
+    public void setProgramCounter(int programCounter) {
+        this.programCounter = programCounter;
+    }
+
+    public short getOpcode() {
+        return opcode;
+    }
+
+    public void setOpcode(short opcode) {
+        this.opcode = opcode;
+    }
+
+    public short getIndexRegisterI() {
+        return indexRegisterI;
+    }
+
+    public void setIndexRegisterI(short indexRegisterI) {
+        this.indexRegisterI = indexRegisterI;
+    }
+
+    public int getStackPointer() {
+        return stackPointer;
+    }
+
+    public void setStackPointer(int stackPointer) {
+        this.stackPointer = stackPointer;
+    }
+
+    public short getRegisterAt(int register) {
+        return this.registers[register];
+    }
+
+    public void setRegisterAt(int register, short value) {
+        this.registers[register] = value;
     }
 
     private void run() {
@@ -115,7 +164,7 @@ public class Cpu {
     }
 
     private int getNextOpcode() {
-        return ((this.memory[this.programCounter] << 8) | (0x00FF & this.memory[this.programCounter +1]))  & 0xFFFF;
+        return ((this.memory.read(this.programCounter) << 8) | (0x00FF & this.memory.read(this.programCounter +1)))  & 0xFFFF;
     }
 
 }
