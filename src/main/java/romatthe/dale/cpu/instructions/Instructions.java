@@ -437,20 +437,4 @@ public class Instructions {
         return SideEffect.NONE;
     };
 
-    /**
-     * Read all of the S registers from the memory pointed to by the index
-     * register. The source register contains the number of S registers to load.
-     * For example, to load all of the S registers, the source register would
-     * contain the value 0xF.
-     */
-    public BiFunction<Cpu, Integer, SideEffect> funcSTOR = (cpu, op) -> {
-        int numberOfRegisters = (op & 0x0F00) >> 8;
-        for (int i = 0; i <= numberOfRegisters; i++) {
-            cpu.getMemory().write(cpu.getRegisterAt(i), cpu.getIndexRegisterI() + i);
-            cpu.setRegisterAt(i, cpu.getMemory().read(cpu.getIndexRegisterI() + 1));
-        }
-
-        return SideEffect.NONE;
-    };
-
 }
